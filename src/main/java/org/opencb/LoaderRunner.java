@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.opencb.loaders.Loader;
 
 import java.io.BufferedReader;
-import java.io.FileDescriptor;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,7 +25,7 @@ public class LoaderRunner<T> {
         ObjectMapper jsonMapper = new ObjectMapper();
 
         try (Stream<String> lines = Files.lines(inputJsonFile)) {
-            lines.map(jsonLine -> paseJsonLine(jsonLine, jsonMapper, typeParameterClass)).forEach(loader::load);
+            lines.map(jsonLine -> parseJsonLine(jsonLine, jsonMapper, typeParameterClass)).forEach(loader::load);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,7 +36,7 @@ public class LoaderRunner<T> {
         try (BufferedReader br = new BufferedReader(new FileReader(inputJsonFile.toFile()))) {
             String jsonLine;
             while ((jsonLine = br.readLine()) != null) {
-                T object = paseJsonLine(jsonLine, jsonMapper, typeParameterClass);
+                T object = parseJsonLine(jsonLine, jsonMapper, typeParameterClass);
                 loader.load(object);
             }
         } catch (IOException e) {
@@ -46,7 +45,7 @@ public class LoaderRunner<T> {
     }
 
 
-    public T paseJsonLine(String jsonLine, ObjectMapper jsonMapper, Class<T> jsonClass) {
+    public T parseJsonLine(String jsonLine, ObjectMapper jsonMapper, Class<T> jsonClass) {
         T object;
         try {
             object = jsonMapper.readValue(jsonLine, jsonClass);
